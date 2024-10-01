@@ -33,7 +33,6 @@ export const useUserStore = create<UserState>((set, get) => ({
       const api = directus(session.access_token);
 
       const user = (await api.request(readMe({ fields }))) as AppUser;
-      console.log(user);
 
       set({
         currentUser: {
