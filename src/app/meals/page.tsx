@@ -1,3 +1,5 @@
+"use client";
+
 // Utils
 import { z } from "zod";
 
@@ -15,27 +17,25 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { DataTable } from "@/components/meals/data-table/data-table";
-
-// Simulate a database read for meals.
-function getMeals() {
-  const meals = fetchMeals();
-
-  return z.array(mealSchema).parse(meals);
-}
+import { useMeals } from "@/hooks/useMeals";
 
 export default function MealsPage() {
-  // Call on data
-  const meals = getMeals();
+  const { data, isLoading, isError } = useMeals();
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Meals</CardTitle>
-        <CardDescription>Manage your meals here.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <DataTable data={meals} columns={columns} />
-      </CardContent>
-    </Card>
-  );
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error loading meals</div>;
+
+  if (data?.data) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Meals</CardTitle>
+          <CardDescription>Manage your meals here.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DataTable data={data?.data} columns={columns} />
+        </CardContent>
+      </Card>
+    );
+  }
 }

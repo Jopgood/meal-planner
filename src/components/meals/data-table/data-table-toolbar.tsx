@@ -6,6 +6,7 @@ import { Table } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "./data-table-view-options";
+import { DataTableAddNew } from "./data-table-add-new";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -21,9 +22,9 @@ export function DataTableToolbar<TData>({
       <div className="flex flex-1 items-center space-x-2">
         <Input
           placeholder="Filter meals..."
-          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("title")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
@@ -38,6 +39,7 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
+      <DataTableAddNew table={table} />
       <DataTableViewOptions table={table} />
     </div>
   );

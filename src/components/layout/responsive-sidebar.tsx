@@ -40,8 +40,6 @@ export function ResponsiveHeaderSidebar({
 }>) {
   const [isMobile, setIsMobile] = useState(false);
 
-  console.log(user);
-
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 640);
