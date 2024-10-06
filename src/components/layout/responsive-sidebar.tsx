@@ -40,11 +40,14 @@ export function ResponsiveHeaderSidebar({
 }>) {
   const [isMobile, setIsMobile] = useState(false);
 
+<<<<<<< HEAD
   const handleSignOut = async () => {
     // Sign out from next auth
     await signOut();
   };
 
+=======
+>>>>>>> 4b0d8af6cb2ede465503c952c00267702b857647
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 640);
