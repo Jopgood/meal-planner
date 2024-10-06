@@ -7,16 +7,25 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { PlusCircleIcon } from "lucide-react";
 import { DialogClose } from "@radix-ui/react-dialog";
+import AddMealForm from "@/components/forms/meals/add-meal";
 
 interface DataTableAddNewProps<TData> {
   table: Table<TData>;
@@ -28,7 +37,7 @@ export function DataTableAddNew<TData>({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm" className="ml-auto hidden h-8 lg:flex">
+        <Button size="sm" className="ml-auto h-8 lg:flex">
           <PlusCircleIcon className="mr-2 h-4 w-4" />
           Add
         </Button>
@@ -39,23 +48,7 @@ export function DataTableAddNew<TData>({
           <DialogDescription>Create a new meal!</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input id="name" value="Tacos 🌮" className="col-span-3" />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
-              Type
-            </Label>
-            <Input id="username" value="Breakfast" className="col-span-3" />
-          </div>
-        </div>
-        <div className="flex mt-[25px] justify-end">
-          <DialogClose>
-            <Button type="submit">Add meal</Button>
-          </DialogClose>
+          <AddMealForm />
         </div>
       </DialogContent>
     </Dialog>
