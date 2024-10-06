@@ -18,6 +18,8 @@ export const directus = (token: string = "") => {
     .with(rest());
 };
 
+export const api = directus(process.env.NEXT_PUBLIC_DIRECTUS_ADMIN_TOKEN);
+
 export const login = async ({
   email,
   password,

@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 // Components
 import {
@@ -27,20 +28,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Sidebar } from "@/components/layout/sidebar";
+import { ThemeCustomizer } from "./theme-customizer";
 
 // Icons
 import { PanelLeft, Search } from "lucide-react";
 
 export function ResponsiveHeaderSidebar({
-  user,
   children,
 }: Readonly<{
-  user: any;
   children: React.ReactNode;
 }>) {
   const [isMobile, setIsMobile] = useState(false);
 
-  console.log(user);
+  const handleSignOut = async () => {
+    // Sign out from next auth
+    await signOut();
+  };
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -129,9 +132,12 @@ export function ResponsiveHeaderSidebar({
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSignOut}>
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <ThemeCustomizer />
         </header>
         {children}
       </div>

@@ -5,7 +5,7 @@ import LoginForm from "@/components/forms/login";
 export const description =
   "A login page with two columns. The first column has the login form with email and password. There's a Forgot your passwork link and a link to sign up if you do not have an account. The second column has a cover image.";
 
-export default function Dashboard() {
+export default function Login() {
   return (
     <div className="w-full lg:grid min-h-screen lg:grid-cols-2">
       <div className="flex items-center justify-center py-12">
@@ -32,6 +32,7 @@ export default function Dashboard() {
           width="1920"
           height="1080"
           className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          priority
         />
       </div>
     </div>
