@@ -5,20 +5,22 @@ import {
   staticToken,
 } from "@directus/sdk";
 
-export const directus = (token: string = "") => {
-  if (token) {
-    return createDirectus(process.env.NEXT_PUBLIC_DIRECTUS_API ?? "")
-      .with(staticToken(token))
-      .with(rest());
-  }
-  return createDirectus(process.env.NEXT_PUBLIC_DIRECTUS_API ?? "")
-    .with(
-      authentication("cookie", { credentials: "include", autoRefresh: true })
-    )
-    .with(rest());
-};
+const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_API ?? "";
 
-export const api = directus(process.env.NEXT_PUBLIC_DIRECTUS_ADMIN_TOKEN);
+export const createDirectusClient = (token?: string) => {
+  const client = createDirectus(directusUrl).with(rest());
+
+  if (token) {
+    return client.with(staticToken(token));
+  }
+
+  return client.with(
+    authentication("cookie", {
+      autoRefresh: true,
+      credentials: "include",
+    })
+  );
+};
 
 export const login = async ({
   email,

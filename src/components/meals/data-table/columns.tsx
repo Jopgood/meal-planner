@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Meal } from "@/types/meal";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
+import { capitaliseFirstLetter } from "@/utils/capitalise-strings";
 
 export const columns: ColumnDef<Meal>[] = [
   {
@@ -42,7 +43,11 @@ export const columns: ColumnDef<Meal>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
-          {row && <Badge variant="outline">{row.original.type}</Badge>}
+          {row && (
+            <Badge variant="outline">
+              {capitaliseFirstLetter(row.original.type)}
+            </Badge>
+          )}
           <span className="max-w-[500px] truncate font-medium">
             {row.getValue("name")}
           </span>

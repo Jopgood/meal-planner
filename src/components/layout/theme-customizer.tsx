@@ -24,13 +24,12 @@ import {
 import { baseColors } from "@/styles/base-colours";
 
 import "@/styles/mdx.css";
-import { useConfigStore } from "@/stores/config";
+import { useConfig } from "@/hooks/useConfig";
 
 import { Palette } from "lucide-react";
 
 export function ThemeCustomizer() {
-  const config = useConfigStore((state) => state.config);
-  const setConfig = useConfigStore((state) => state.setConfig);
+  const { config, setConfig } = useConfig();
 
   const { resolvedTheme: mode } = useTheme();
   const [mounted, setMounted] = React.useState(false);
@@ -150,8 +149,7 @@ export function ThemeCustomizer() {
 function Customizer() {
   const [mounted, setMounted] = React.useState(false);
   const { setTheme: setMode, resolvedTheme: mode } = useTheme();
-  const config = useConfigStore((state) => state.config);
-  const setConfig = useConfigStore((state) => state.setConfig);
+  const { config, setConfig } = useConfig();
 
   React.useEffect(() => {
     setMounted(true);

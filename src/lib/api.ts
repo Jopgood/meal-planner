@@ -1,41 +1,66 @@
-// lib/api.ts
-type DirectusAction =
-  | "readOne"
-  | "readMany"
-  | "createOne"
-  | "updateOne"
-  | "deleteOne";
+import {
+  readItems,
+  createItem as createItemDirectus,
+  updateItem as updateItemDirectus,
+  deleteItem as deleteItemDirectus,
+} from "@directus/sdk";
+import { createDirectusClient } from "@/services/directus";
+import { getSession } from "next-auth/react";
+import { QueryClient } from "@tanstack/react-query";
 
-async function fetchDirectusAPI(
-  action: DirectusAction,
-  collection: string,
-  data?: any,
-  id?: string | number
-) {
-  const response = await fetch("/api/directus", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ action, collection, data, id }),
-  });
+export const queryClient = new QueryClient();
 
-  if (!response.ok) {
-    throw new Error("API request failed");
+export const getDirectusClient = async () => {
+  const session = await getSession();
+  return createDirectusClient(session?.access_token);
+};
+
+export const fetchData = async (resource: string, query: any = {}) => {
+  const client = await getDirectusClient();
+  return client.request(readItems(resource, query));
+};
+
+export const createItem = async (
+  resource: string,
+  item: any,
+  queryClient?: QueryClient
+) => {
+  try {
+    const client = await getDirectusClient();
+    const result = await client.request(createItemDirectus(resource, item));
+
+    if (!result) {
+      throw new Error("Failed to create item");
+    }
+
+    // Invalidate queries if queryClient is provided
+    queryClient?.invalidateQueries({ queryKey: [resource] });
+
+    return result;
+  } catch (error) {
+    console.error("Error creating item:", error);
+    throw error;
   }
+};
 
-  return response.json();
-}
+export const updateItem = async (resource: string, id: string, item: any) => {
+  try {
+    const client = await getDirectusClient();
+    const result = await client.request(updateItemDirectus(resource, id, item));
 
-export const databaseApi = {
-  readOne: (collection: string, id: string | number) =>
-    fetchDirectusAPI("readOne", collection, undefined, id),
-  readMany: (collection: string, query?: any) =>
-    fetchDirectusAPI("readMany", collection, query),
-  createOne: (collection: string, item: any) =>
-    fetchDirectusAPI("createOne", collection, item),
-  updateOne: (collection: string, id: string | number, data: any) =>
-    fetchDirectusAPI("updateOne", collection, data, id),
-  deleteOne: (collection: string, id: string | number) =>
-    fetchDirectusAPI("deleteOne", collection, undefined, id),
+    if (!result) {
+      throw new Error("Failed to update item");
+    }
+
+    queryClient.invalidateQueries({ queryKey: [resource] });
+    return result;
+  } catch (error) {
+    console.error("Error updating item:", error);
+    throw error; // Re-throw the error to be handled by the caller
+  }
+};
+
+export const deleteItem = async (resource: string, id: string) => {
+  const client = await getDirectusClient();
+  return client.request(deleteItemDirectus(resource, id));
 };

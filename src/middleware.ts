@@ -1,44 +1,50 @@
-import { getToken } from "next-auth/jwt";
-import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import { withAuth } from "next-auth/middleware";
+import { getToken } from "next-auth/jwt";
 
 export default withAuth(
   async function middleware(req) {
     const token = await getToken({ req });
 
-    const isAuth = !!token;
-    const isAuthPage = req.nextUrl.pathname === "/";
+    if (token?.error === "RefreshAccessTokenError") {
+      // Redirect to a special logout route
+      return NextResponse.redirect(
+        new URL("/api/auth/error?error=RefreshAccessTokenError", req.url)
+      );
+    }
 
-    // If on the auth page and authenticated, redirect to dashboard
+    const isAuthPage = req.nextUrl.pathname === "/";
+    const isAuth = !!token; // Use token instead of req.nextauth.token for consistency
+
+    // Redirect authenticated users from auth page to dashboard
+    if (isAuthPage && isAuth) {
+      return NextResponse.redirect(new URL("/meals", req.url));
+    }
+
+    // Allow access to auth page for non-authenticated users
     if (isAuthPage) {
-      if (isAuth) {
-        return NextResponse.redirect(new URL("/meals", req.url));
-      }
-      // Continue to the auth page if not authenticated
       return NextResponse.next();
     }
 
-    // If not authenticated, redirect to the login page
+    // For non-auth pages, redirect non-authenticated users to login
     if (!isAuth) {
-      let from = req.nextUrl.pathname;
-      if (req.nextUrl.search) {
-        from += req.nextUrl.search;
-      }
-
+      const from = req.nextUrl.pathname + req.nextUrl.search;
       return NextResponse.redirect(
         new URL(`/?from=${encodeURIComponent(from)}`, req.url)
       );
     }
 
-    // Continue to the requested page if authenticated
+    // Allow access for authenticated users
     return NextResponse.next();
   },
   {
     callbacks: {
-      // Always authorize the middleware to run, but you can adjust this if needed
-      async authorized() {
-        return true;
-      },
+      authorized: ({ token }) => true, // Always run this middleware
     },
   }
 );
+
+// Matcher configuration remains the same
+export const config = {
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+};

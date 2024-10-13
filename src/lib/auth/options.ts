@@ -1,7 +1,7 @@
 import { NextAuthOptions, Awaitable, User, Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { handleError } from "../utils";
-import { directus, login } from "@/services/directus";
+import { createDirectusClient, login } from "@/services/directus";
 import { readMe, refresh } from "@directus/sdk";
 import { JWT } from "next-auth/jwt";
 import { AuthRefresh, UserSession, UserParams } from "@/types/next-auth";
@@ -39,7 +39,7 @@ export const options: NextAuthOptions = {
             password: string;
           };
           const auth = await login({ email, password });
-          const apiAuth = directus(auth.access_token ?? "");
+          const apiAuth = createDirectusClient(auth.access_token ?? "");
           const loggedInUser = await apiAuth.request(
             readMe({
               fields: ["id", "email", "first_name", "last_name"],
@@ -87,7 +87,7 @@ export const options: NextAuthOptions = {
         return { ...token, error: null };
       } else {
         try {
-          const api = directus();
+          const api = createDirectusClient();
           const result: AuthRefresh = await api.request(
             refresh("json", user?.refresh_token ?? token?.refresh_token ?? "")
           );

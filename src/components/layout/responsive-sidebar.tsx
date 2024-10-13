@@ -40,14 +40,11 @@ export function ResponsiveHeaderSidebar({
 }>) {
   const [isMobile, setIsMobile] = useState(false);
 
-<<<<<<< HEAD
   const handleSignOut = async () => {
     // Sign out from next auth
     await signOut();
   };
 
-=======
->>>>>>> 4b0d8af6cb2ede465503c952c00267702b857647
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 640);
@@ -96,12 +93,12 @@ export function ResponsiveHeaderSidebar({
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="#">Products</Link>
+                  <Link href="#">Meals</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>All Products</BreadcrumbPage>
+                <BreadcrumbPage>All Meals</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>

@@ -1,13 +1,13 @@
 "use client";
 
+import { useConfig } from "@/hooks/useConfig";
 import { cn } from "@/lib/utils";
-import { useConfigStore } from "@/stores/config";
 
 export function ThemeWrapper({
   children,
   className,
 }: Readonly<React.ComponentProps<"div">>) {
-  const config = useConfigStore((state) => state.config);
+  const { config } = useConfig();
 
   return (
     <div

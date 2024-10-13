@@ -9,6 +9,10 @@ import { useAuthStore } from "@/stores/auth";
 import { useHydrationStore } from "@/stores/hydration";
 
 import "@/styles/themes.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { LoadingScreen } from "./loading-screen";
+
+const queryClient = new QueryClient();
 
 function AuthenticatedContent({
   children,
@@ -20,15 +24,24 @@ function AuthenticatedContent({
     useHydrationStore();
 
   useEffect(() => {
-    setIsLoading(status === "loading");
-    if (status === "authenticated" && session) {
-      if (!hasHydrated && !isHydrating) {
-        hydrate(session);
+    const handleAuth = async () => {
+      if (status === "loading") {
+        setIsLoading(true);
+      } else {
+        setIsLoading(false);
+
+        if (status === "authenticated" && session) {
+          if (!hasHydrated && !isHydrating) {
+            await hydrate(session);
+          }
+        } else if (status === "unauthenticated") {
+          await hydrate(null);
+          router.push("/");
+        }
       }
-    } else if (status === "unauthenticated") {
-      hydrate(null);
-      router.push("/login");
-    }
+    };
+
+    handleAuth();
   }, [
     status,
     session,
@@ -40,22 +53,27 @@ function AuthenticatedContent({
   ]);
 
   if (status === "loading" || isHydrating) {
-    return <div>Loading...</div>;
+    return <LoadingScreen message="Authenticating..." />;
   }
 
   if (hydrationError) {
     return <div>Error: {hydrationError.message}</div>;
   }
 
-  return (
-    <ThemeWrapper className="relative flex w-full flex-col">
-      <ResponsiveSidebar>
-        <div className="flex min-h-screen w-full flex-col bg-muted/40">
-          <main className="p-4 sm:p-6">{children}</main>
-        </div>
-      </ResponsiveSidebar>
-    </ThemeWrapper>
-  );
+  if (status === "authenticated") {
+    return (
+      <ThemeWrapper className="relative flex w-full flex-col">
+        <ResponsiveSidebar>
+          <div className="flex min-h-screen w-full flex-col bg-muted/40">
+            <main className="p-4 sm:p-6">{children}</main>
+          </div>
+        </ResponsiveSidebar>
+      </ThemeWrapper>
+    );
+  }
+
+  // If not authenticated and not already redirecting, show loading
+  return <LoadingScreen message="Redirecting..." />;
 }
 
 export default function AuthProvider({
@@ -67,14 +85,16 @@ export default function AuthProvider({
 }>) {
   return (
     <SessionProvider session={session}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <AuthenticatedContent>{children}</AuthenticatedContent>
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthenticatedContent>{children}</AuthenticatedContent>
+        </ThemeProvider>
+      </QueryClientProvider>
     </SessionProvider>
   );
 }

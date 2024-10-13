@@ -3,6 +3,9 @@ import { Inter as FontSans } from "next/font/google";
 import "@/styles/globals.css";
 
 import { cn } from "@/lib/utils";
+import { LoadingScreen } from "@/components/loading-screen";
+import { Suspense } from "react";
+import { Toaster } from "@/components/ui/toaster";
 
 const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -25,7 +28,10 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        {children}
+        <Suspense fallback={<LoadingScreen message="Loading..." />}>
+          {children}
+        </Suspense>
+        <Toaster />
       </body>
     </html>
   );

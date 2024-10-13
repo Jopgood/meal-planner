@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { AppUser, UserState } from "./types";
 import { userName } from "@/utils/user-name";
-import { directus } from "@/services/directus";
+import { createDirectusClient } from "@/services/directus";
 import { readMe } from "@directus/sdk";
 
 export const useUserStore = create<UserState>((set, get) => ({
@@ -35,7 +35,7 @@ export const useUserStore = create<UserState>((set, get) => ({
       }
 
       const fields = ["*"];
-      const api = directus(session.access_token);
+      const api = createDirectusClient(session.access_token);
 
       const user = await api.request(readMe({ fields }));
 

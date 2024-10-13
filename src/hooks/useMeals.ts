@@ -1,10 +1,10 @@
-import { useQuery } from '@tanstack/react-query'
-import { fetchMeals } from '@/services/meals'
+import { useQuery } from "@tanstack/react-query";
+import { fetchMeals } from "@/services/meals";
 
 export const useMeals = () => {
-    return useQuery({
-        queryKey: ['meals'],
-        queryFn: () => fetchMeals(),
-        staleTime: 5 * 60 * 1000
-    })
-}
+  return useQuery({
+    queryKey: ["meals"],
+    queryFn: () => fetchMeals(),
+    staleTime: 5 * 60 * 1000,
+  });
+};
