@@ -1,6 +1,6 @@
 import { NextAuthOptions, Awaitable, User, Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { handleError } from "../utils";
+import { handleError } from "@/lib/errors";
 import { createDirectusClient, login } from "@/services/directus";
 import { readMe, refresh } from "@directus/sdk";
 import { JWT } from "next-auth/jwt";
@@ -123,7 +123,7 @@ export const options: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/login",
-    error: "/login",
+    signIn: "/",
+    error: "/",
   },
 };

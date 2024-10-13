@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { LoadingScreen } from "@/components/loading-screen";
 import { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
+import ErrorHandler from "@/components/error-handler";
 
 const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -32,6 +33,7 @@ export default function RootLayout({
           {children}
         </Suspense>
         <Toaster />
+        <ErrorHandler />
       </body>
     </html>
   );

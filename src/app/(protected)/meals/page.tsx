@@ -1,6 +1,8 @@
 "use client";
 // Data
 import { columns } from "@/components/meals/data-table/columns";
+import { useDirectusQuery } from "@/hooks/useDirectus";
+import { Meal } from "@/types/meal";
 
 // Components
 import {
@@ -11,8 +13,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { DataTable } from "@/components/meals/data-table/data-table";
-import { useDirectusQuery } from "@/hooks/useDirectus";
-import { Meal } from "@/types/meal";
+
 import { LoadingScreen } from "@/components/loading-screen";
 
 export default function MealsPage() {

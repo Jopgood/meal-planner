@@ -7,7 +7,7 @@ export default withAuth(
     const token = await getToken({ req });
 
     if (token?.error === "RefreshAccessTokenError") {
-      // Redirect to a special logout route
+      // Redirect to the new error handling route
       return NextResponse.redirect(
         new URL("/api/auth/error?error=RefreshAccessTokenError", req.url)
       );
