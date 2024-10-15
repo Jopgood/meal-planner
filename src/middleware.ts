@@ -7,14 +7,14 @@ export default withAuth(
     const token = await getToken({ req });
 
     if (token?.error === "RefreshAccessTokenError") {
-      // Redirect to the new error handling route
       return NextResponse.redirect(
         new URL("/api/auth/error?error=RefreshAccessTokenError", req.url)
       );
     }
 
     const isAuthPage = req.nextUrl.pathname === "/";
-    const isAuth = !!token; // Use token instead of req.nextauth.token for consistency
+    const isProtectedRoute = req.nextUrl.pathname.startsWith("/(protected)");
+    const isAuth = !!token;
 
     // Redirect authenticated users from auth page to dashboard
     if (isAuthPage && isAuth) {
@@ -26,15 +26,15 @@ export default withAuth(
       return NextResponse.next();
     }
 
-    // For non-auth pages, redirect non-authenticated users to login
-    if (!isAuth) {
+    // For protected routes, redirect non-authenticated users to login
+    if (isProtectedRoute && !isAuth) {
       const from = req.nextUrl.pathname + req.nextUrl.search;
       return NextResponse.redirect(
         new URL(`/?from=${encodeURIComponent(from)}`, req.url)
       );
     }
 
-    // Allow access for authenticated users
+    // Allow access for all other routes
     return NextResponse.next();
   },
   {
@@ -44,7 +44,10 @@ export default withAuth(
   }
 );
 
-// Matcher configuration remains the same
+// Update the matcher configuration
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    "/(protected)/:path*",
+  ],
 };

@@ -25,7 +25,7 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Email is required.",
   }),
-  password: z.string().nonempty({ message: "Password is required" }),
+  password: z.string().min(1, { message: "Password is required" }),
 });
 
 export default function LoginForm() {
