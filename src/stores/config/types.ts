@@ -4,6 +4,7 @@ export interface Config {
   style: string;
   theme: BaseColor["name"];
   radius: number;
+  mode: "dark" | "light" | "system";
 }
 
 export interface ConfigState {

@@ -30,7 +30,7 @@ const formSchema = z.object({
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -46,17 +46,29 @@ export default function LoginForm() {
     values: z.infer<typeof formSchema>
   ): Promise<void> => {
     setIsLoading(true);
-    const res = await signIn("credentials", {
-      email: values.email,
-      password: values.password,
-      callbackUrl: `/`,
-      redirect: false,
-    });
-    if (res?.error) {
-      setError(res?.error);
+    setError(null); // Reset any previous errors
+
+    try {
+      const res = await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        callbackUrl: `/`,
+        redirect: false,
+      });
+
+      if (res?.error) {
+        throw new Error(res.error);
+      } else {
+        router.push("/meals");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unexpected error occurred");
+      }
+    } finally {
       setIsLoading(false);
-    } else {
-      router.push("/meals");
     }
   };
 

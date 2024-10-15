@@ -6,6 +6,8 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 
 // Components
 import {
@@ -40,9 +42,31 @@ export function ResponsiveHeaderSidebar({
 }>) {
   const [isMobile, setIsMobile] = useState(false);
 
+  // Use the App Router's useRouter
+  const router = useRouter();
+  const { setTheme } = useTheme();
+
   const handleSignOut = async () => {
-    // Sign out from next auth
-    await signOut();
+    try {
+      // Call a custom API route to handle server-side logout
+      await fetch("/api/auth/logout", { method: "POST" });
+
+      // Clear client-side NextAuth session
+      await signOut({ redirect: false });
+
+      // Clear any client-side storage
+      localStorage.clear();
+      sessionStorage.clear();
+
+      // Reset theme to default (usually 'light' or 'system')
+      setTheme("light"); // or 'system', depending on your default
+
+      // Force a hard reload to clear any lingering state
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      console.error("Error during sign out:", error);
+    }
   };
 
   useEffect(() => {

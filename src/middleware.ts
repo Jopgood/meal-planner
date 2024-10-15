@@ -21,6 +21,11 @@ export default withAuth(
       return NextResponse.redirect(new URL("/meals", req.url));
     }
 
+    // Add this check for logout
+    if (req.nextUrl.pathname === "/api/auth/logout") {
+      return NextResponse.next();
+    }
+
     // Allow access to auth page for non-authenticated users
     if (isAuthPage) {
       return NextResponse.next();
@@ -49,5 +54,6 @@ export const config = {
   matcher: [
     "/((?!api|_next/static|_next/image|favicon.ico).*)",
     "/(protected)/:path*",
+    "/api/auth/logout",
   ],
 };

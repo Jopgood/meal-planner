@@ -31,12 +31,19 @@ import { Palette } from "lucide-react";
 export function ThemeCustomizer() {
   const { config, setConfig } = useConfig();
 
-  const { resolvedTheme: mode } = useTheme();
+  const { resolvedTheme: mode, setTheme: setMode } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
+
+  React.useEffect(() => {
+    // Sync the theme from the store with next-themes
+    if (config.mode !== "system") {
+      setMode(config.mode);
+    }
+  }, [config.mode, setMode]);
 
   return (
     <div className="flex items-center gap-2">
@@ -155,6 +162,11 @@ function Customizer() {
     setMounted(true);
   }, []);
 
+  const handleModeChange = (newMode: "light" | "dark" | "system") => {
+    setConfig({ mode: newMode });
+    setMode(newMode);
+  };
+
   return (
     <ThemeWrapper className="flex flex-col space-y-4 md:space-y-6">
       <div className="flex items-start pt-4 md:pt-0">
@@ -261,8 +273,10 @@ function Customizer() {
                 <Button
                   variant={"outline"}
                   size="sm"
-                  onClick={() => setMode("light")}
-                  className={cn(mode === "light" && "border-2 border-primary")}
+                  onClick={() => handleModeChange("light")}
+                  className={cn(
+                    config.mode === "light" && "border-2 border-primary"
+                  )}
                 >
                   <SunIcon className="mr-1 -translate-x-1" />
                   Light
@@ -270,15 +284,29 @@ function Customizer() {
                 <Button
                   variant={"outline"}
                   size="sm"
-                  onClick={() => setMode("dark")}
-                  className={cn(mode === "dark" && "border-2 border-primary")}
+                  onClick={() => handleModeChange("dark")}
+                  className={cn(
+                    config.mode === "dark" && "border-2 border-primary"
+                  )}
                 >
                   <MoonIcon className="mr-1 -translate-x-1" />
                   Dark
                 </Button>
+                <Button
+                  variant={"outline"}
+                  size="sm"
+                  onClick={() => handleModeChange("system")}
+                  className={cn(
+                    config.mode === "system" && "border-2 border-primary"
+                  )}
+                >
+                  <ResetIcon className="mr-1 -translate-x-1" />
+                  System
+                </Button>
               </>
             ) : (
               <>
+                <Skeleton className="h-8 w-full" />
                 <Skeleton className="h-8 w-full" />
                 <Skeleton className="h-8 w-full" />
               </>

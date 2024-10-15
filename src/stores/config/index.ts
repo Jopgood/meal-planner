@@ -7,6 +7,7 @@ const defaultConfig: Config = {
   style: "new-york",
   theme: "zinc",
   radius: 0.5,
+  mode: "dark",
 };
 
 export const useConfigStore = create<ConfigState>((set, get) => ({
